@@ -5,12 +5,58 @@ function HSBanner() {
 	$('.hideBanner').css('display', 'block');
 }
 
+// 닉네임 중복
+$('#NickDupCheckBtn').click(function() {
+	let checkNick = $('#inputNickname').val();
+	if (checkNick.trim().length == 0) {
+		alert('공백입니다');
+	} else {
+		console.log(userNick);
+		$.ajax({
+			url : "nickCheck",
+			type : "post",
+			async : false,
+			data : {
+				userNick : checkNick
+			},
+			dataType : 'json',
+			success : function(data) {
+				if (data.result == "success") {
+					$('#NickDupWarning').css("display", "none");
+					$('#NickDupWarning').css("display", "block");
+					$('label[for="NickLabelWarning"]').css('color', '#787878');
+					$('label[for="NickLabelWarning"]').text('닉네임 사용가능!');
+					$('#NickDupCheck').attr('value','Check');
+					$('#inputUserNick').attr('readonly', true);
+				} else {
+					$('#NickDupWarning').css("display", "none");
+					$('#NickDupWarning').css("display", "block");
+					$('label[for="NickLabelWarning"]').css('color', 'rgb(255 0 0)');
+					$('label[for="NickLabelWarning"]').text('닉네임 중복 다시입력');
+					$('#NickDupCheck').attr('value','UnCheck');
+					$('#inputUserNick').val('');
+				}
+			},
+			error : function() {
+				alert("서버요청실패");
+			}
+		});
+	}
+});
+
+// 닉네임 재입력
+function nickReInput() {
+	$('#NickDupWarning').css("display", "none");
+	$('#inputUserNick').attr('readonly', false);
+	$('#NickDupCheck').attr('value','UnCheck');
+	$('#inputUserNick').val('');
+}
 
 // 아이디 중복
-$('#IdDupCheck').click(function() {
-	let userId = $('#inputUserId').val();
-	if (userId.trim().length == 0) {
-		alert('뭐라도 입력해라');
+$('#IdDupCheckBtn').click(function() {
+	let checkId = $('#inputUserId').val();
+	if (checkId.trim().length == 0) {
+		alert('공백입니다');
 	} else {
 		console.log(userId);
 		$.ajax({
@@ -18,23 +64,23 @@ $('#IdDupCheck').click(function() {
 			type : "post",
 			async : false,
 			data : {
-				sdy : userId
+				userId : checkId
 			},
 			dataType : 'json',
-			success : function(result) {
-				if (result == 0) {
+			success : function(data) {
+				if (data.result == "success") {
 					$('#IdDupWarning').css("display", "none");
 					$('#IdDupWarning').css("display", "block");
 					$('label[for="IdLabelWarning"]').css('color', '#787878');
 					$('label[for="IdLabelWarning"]').text('아이디 사용가능!');
-					$('#DupCheck').attr('value','Check');
+					$('#IdDupCheck').attr('value','Check');
 					$('#inputUserId').attr('readonly', true);
 				} else {
 					$('#IdDupWarning').css("display", "none");
 					$('#IdDupWarning').css("display", "block");
 					$('label[for="IdLabelWarning"]').css('color', 'rgb(255 0 0)');
 					$('label[for="IdLabelWarning"]').text('아이디 중복 다시입력');
-					$('#DupCheck').attr('value','UnCheck');
+					$('#IdDupCheck').attr('value','UnCheck');
 					$('#inputUserId').val('');
 				}
 			},
@@ -49,9 +95,85 @@ $('#IdDupCheck').click(function() {
 function reInput() {
 	$('#IdDupWarning').css("display", "none");
 	$('#inputUserId').attr('readonly', false);
-	$('#DupCheck').attr('value','UnCheck');
+	$('#IdDupCheck').attr('value','UnCheck');
 	$('#inputUserId').val('');
 }
+
+// 이메일 형식 검사 및 중복체크
+$('#EmailCheckBtn').click(function() {
+	let checkEmail = $('#inputUserEmail').val();
+	let regex = new RegExp("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
+	if (!regex.test(checkEmail)) {
+		$('#EmailDupWarning').css("display", "none");
+		$('#EmailDupWarning').css("display", "block");
+		$('label[for="EmailLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="EmailLabelWarning"]').text('이메일 형식에 맞춰주세요');
+		$('#inputUserEmail').val('');
+	} else if (checkEmail.trim().length == 0) {
+		$('#EmailDupWarning').css("display", "none");
+		$('#EmailDupWarning').css("display", "block");
+		$('label[for="EmailLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="EmailLabelWarning"]').text('공백입니다');
+		$('#inputUserEmail').val('');
+	} else {
+		console.log(checkEmail);
+		$.ajax({
+			url : "emailCheck",
+			type : "post",
+			async : false,
+			data : {
+				userEmail : checkEmail
+			},
+			dataType : 'json',
+			success : function(data) {
+				if (data.result == "success") {
+					$('#EmailDupWarning').css("display", "none");
+					$('#EmailDupWarning').css("display", "block");
+					$('label[for="EmailLabelWarning"]').css('color', '#787878');
+					$('label[for="EmailLabelWarning"]').text('이메일 사용가능!');
+					$('#EmailDupCheck').attr('value','Check');
+					$('#inputUserEmail').attr('readonly', true);
+				} else {
+					$('#EmailDupWarning').css("display", "none");
+					$('#EmailDupWarning').css("display", "block");
+					$('label[for="EmailLabelWarning"]').css('color', 'rgb(255 0 0)');
+					$('label[for="EmailLabelWarning"]').text('이메일 중복 다시입력');
+					$('#EmailDupCheck').attr('value','UnCheck');
+					$('#inputUserEmail').val('');
+				}
+			},
+			error : function() {
+				alert("서버요청실패");
+			}
+		});
+	}
+});
+
+// 이메일 인증번호 발급
+$('#sendEmailCode').click(function() {
+	var code = "";
+	$.ajax({
+		url : "rightEmailCheck",
+		type : "post",
+		data : {
+			userEmail : $("#inputUserEmail").val()
+		},
+		dataType : 'json',
+		success : function(data) {
+			if (data.result == "error") {
+				alert("서버 통신 에러");
+			} else {
+				alert("인증번호 발송완료, 이메일을 학인하세요");
+				$('#EmailDupWarning').css("display", "none");
+				$('#EmailDupWarning').css("display", "block");
+				$('label[for="EmailLabelWarning"]').css('color', '#787878');
+				$('label[for="EmailLabelWarning"]').text('이메일 사용가능!');
+				$('#EmailDupCheck').attr('value','Check');
+				$('#inputUserEmail').attr('readonly', true);
+			}
+		}
+	});
+});
 
 // 비밀번호 확인
 function checkPw() {
@@ -230,13 +352,6 @@ function formCheck(obj) {
 		obj.rn2.focus();
 		return false;
 	}
-	if (obj.DupCheck.value!="Check"){
-		$('#RnDupWarning').css("display", "none");
-		$('#RnDupWarning').css("display", "block");
-		$('label[for="RnLabelWarning"]').css('color', 'rgb(255 0 0)');
-		$('label[for="RnLabelWarning"]').text('아이디중복체크');
-		return false;
-	}
 	// 주민번호 유효성검사
 	rnCheck = obj.rn1.value.trim() + obj.rn2.value.trim();
 	sum = 0;
@@ -253,8 +368,77 @@ function formCheck(obj) {
 		obj.rn2.focus();
 		return false;
 	}
+	// 아이디 중복체크
+	if (obj.IdDupCheck.value!="Check"){
+		$('#IdDupWarning').css("display", "none");
+		$('#IdDupWarning').css("display", "block");
+		$('label[for="IdLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="IdLabelWarning"]').text('아이디중복체크');
+		return false;
+	}
+	// 닉 중복체크
+	if (obj.NickDupCheck.value!="Check"){
+		$('#NickDupWarning').css("display", "none");
+		$('#NickDupWarning').css("display", "block");
+		$('label[for="NickLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="NickLabelWarning"]').text('닉네임중복체크');
+		return false;
+	}
+	// 이메일 중복체크
+	if (obj.EmailDupCheck.value!="Check"){
+		$('#EmailDupWarning').css("display", "none");
+		$('#EmailDupWarning').css("display", "block");
+		$('label[for="EmailLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="EmailLabelWarning"]').text('이메일중복체크');
+		return false;
+	}
 	
 	return checkRn();
+}
+
+function checkRn(){
+	// 주민등록번호 중복체크
+	let trueOrFalse = true;
+	$.ajax({
+		url : "rnCheck",
+		type : "post",
+		async : false,
+		data : {
+			checkRegistNumber : rnCheck
+		},
+		dataType : 'json',
+		success : function(result) {
+			if (result != 0) {
+				trueOrFalse = false;
+				$('#RnDupWarning').css("display", "none");
+				$('#RnDupWarning').css("display", "block");
+				$('label[for="RnLabelWarning"]').css('color', 'rgb(255 0 0)');
+				$('label[for="RnLabelWarning"]').text('해당주민등록번호로 회원가입된 아이디있음');
+			}
+		},
+		error : function() {
+			trueOrFalse = false;
+			alert("서버요청실패");
+		}
+	});
+	
+	if ($("#inputCode").length != 6) {
+		trueOrFalse = false;
+		$('#CodeDupWarning').css("display", "none");
+		$('#CodeDupWarning').css("display", "block");
+		$('label[for="CodeLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="CodeLabelWarning"]').text('인증번호가 일치하지 않습니다');
+	}
+	
+	if ($("#inputCode").val() != $("#correctCode").val()) {
+		trueOrFalse = false;
+		$('#CodeDupWarning').css("display", "none");
+		$('#CodeDupWarning').css("display", "block");
+		$('label[for="CodeLabelWarning"]').css('color', 'rgb(255 0 0)');
+		$('label[for="CodeLabelWarning"]').text('인증번호가 일치하지 않습니다');
+	}
+	
+	return trueOrFalse;
 }
 
 function formCheckFindId(obj) {
@@ -339,34 +523,6 @@ function formCheckFindPw(obj) {
 	}
 	
 	return true;
-}
-
-function checkRn(){
-	// 주민등록번호 중복체크
-	let trueOrFalse = true;
-	$.ajax({
-		url : "rnCheck",
-		type : "post",
-		async : false,
-		data : {
-			checkRegistNumber : rnCheck
-		},
-		dataType : 'json',
-		success : function(result) {
-			if (result != 0) {
-				trueOrFalse = false;
-				$('#RnDupWarning').css("display", "none");
-				$('#RnDupWarning').css("display", "block");
-				$('label[for="RnLabelWarning"]').css('color', 'rgb(255 0 0)');
-				$('label[for="RnLabelWarning"]').text('해당주민등록번호로 회원가입된 아이디있음');
-			}
-		},
-		error : function() {
-			trueOrFalse = false;
-			alert("서버요청실패");
-		}
-	});
-	return trueOrFalse;
 }
 
 // 랜덤메뉴 생성

@@ -1,7 +1,5 @@
 package kr.co.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,43 +8,31 @@ import kr.co.vo.UserVo;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
 	@Autowired
 	private UserDao dao;
 
+	// 회원가입
 	@Override
-	public UserVo selectUserById(String id) {
-		return dao.selectUserById(id);
+	public void insertUser(UserVo userVo) {
+		dao.insertUser(userVo);
 	}
 
+	// 아이디 중복
 	@Override
-	public List<UserVo> selectUserList() throws Exception{
-		return dao.selectUserList();
+	public boolean dupId(String userId) {
+		return dao.dupId(userId) > 0;
 	}
 
+	// 닉 중복
 	@Override
-	public void insertUser(UserVo vo) {
-		dao.insertUser(vo);
+	public boolean dupNick(String userNick) {
+		return dao.dupNick(userNick) > 0;
 	}
 
+	// 이메일 중복
 	@Override
-	public void updateUser(UserVo vo) {
-		dao.updateUser(vo);
-	}
-
-	@Override
-	public int deleteUser(UserVo vo) {
-		return dao.deleteUser(vo);
-	}
-
-	@Override
-	public String findIdByNameRn(UserVo vo) {
-		return dao.findIdByNameRn(vo);
-	}
-
-	@Override
-	public String findPwByNameRn(UserVo vo) {
-		return dao.findPwByNameRn(vo);
+	public boolean dupEmail(String userEmail) {
+		return dao.dupEmail(userEmail) > 3;
 	}
 
 }

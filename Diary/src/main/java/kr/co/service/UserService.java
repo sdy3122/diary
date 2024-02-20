@@ -1,15 +1,17 @@
 package kr.co.service;
 
-import java.util.List;
-
 import kr.co.vo.UserVo;
 
 public interface UserService {
-	List<UserVo> selectUserList() throws Exception;
-	void updateUser(UserVo vo);
-	String findPwByNameRn(UserVo vo);
-	String findIdByNameRn(UserVo vo);
-	int deleteUser(UserVo vo);
-	void insertUser(UserVo vo);
-	UserVo selectUserById(String id);
+	// 회원가입
+	public void insertUser(UserVo userVo);
+
+	// 아이디 중복
+	public boolean dupId(String userId);
+
+	// 닉 중복
+	public boolean dupNick(String userNick);
+
+	// 이메일 중복
+	public boolean dupEmail(String userEmail);
 }

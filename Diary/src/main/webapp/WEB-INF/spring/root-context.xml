@@ -20,8 +20,10 @@
 	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
-		<property name="mapperLocations" value="classpath:/mybatis/mappers/*.xml"/>
+		<property name="configLocation"
+			value="classpath:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations"
+			value="classpath:/mybatis/mappers/*.xml" />
 	</bean>
 
 	<bean id="sqlSession"
@@ -41,9 +43,26 @@
 		<property name="username" value="root" />
 		<property name="password" value="0000" />
 	</bean>
+	
+	<!-- 메일 bean 추가 -->
+	<bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="dyoung312269@gmail.com" />
+		<property name="password" value="seodeok34@" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">true</prop>
+				<prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+				<prop key="mail.smtp.ssl.protocols">TLSv1.2</prop>
+			</props>
+		</property>
+	</bean>
 
 	<context:component-scan base-package="kr.co.*" />
-
-
 
 </beans>

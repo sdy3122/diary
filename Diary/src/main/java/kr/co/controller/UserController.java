@@ -1,12 +1,18 @@
 package kr.co.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,46 +22,130 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.co.mappers.SulMapper;
-import kr.co.mappers.UserMapper;
 import kr.co.service.UserService;
 import kr.co.vo.UserVo;
 
 @Controller
 public class UserController {
+	private final HashMap<String, Object> data = new HashMap<>();
 
 	@Autowired
-	private UserService service;
+	private UserService userService;
 	@Autowired
-	private UserMapper userMapper;
+	private JavaMailSender javaMailSender;
 	@Autowired
 	private SulMapper sulMapper;
-	
+
+	// 시작페이지
 	@GetMapping(value = { "/", "index" })
 	public String home(Model model) {
 		return "index";
+	}
+
+	// 회원가입 페이지
+	@GetMapping("registPage")
+	public String registPage() {
+		return "user/registPage";
+	}
+
+	// 회원가입 프로세스
+	@PostMapping("/regist")
+	public String registAfter(UserVo userVo) {
+		String hashPw = BCrypt.hashpw(userVo.getUserPw(), BCrypt.gensalt());
+		userVo.setUserPw(hashPw);
+
+		userService.insertUser(userVo);
+		/*
+		 * 이러면 안되나 return "index";
+		 */
+		return "redirect:../";
+	}
+
+	// 아이디 중복체크 프로세스
+	@PostMapping("/idCheck")
+	public HashMap<String, Object> idCheck(String userId) {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		boolean exist = userService.dupId(userId);
+		if (exist) {
+			data.put("result", "fail");
+		} else {
+			data.put("result", "success");
+		}
+		return data;
+	}
+
+	// 닉네임 중복체크 프로세스
+	@PostMapping("/nickCheck")
+	public HashMap<String, Object> nickCheck(String userNick) {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		boolean exist = userService.dupNick(userNick);
+		if (exist) {
+			data.put("result", "fail");
+		} else {
+			data.put("result", "success");
+		}
+		return data;
+	}
+
+	// 이메일 중복체크 프로세스
+	@PostMapping("/emailCheck")
+	public HashMap<String, Object> emailCheck(String userEmail) {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		boolean exist = userService.dupEmail(userEmail);
+		if (exist) {
+			data.put("result", "fail");
+		} else {
+			data.put("result", "success");
+		}
+		return data;
+	}
+	
+	// 이메일 인증
+	@PostMapping("/rightEmailCheck")
+	public HashMap<String, Object> rightEmailCheck(String userEmail) {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		Random random = new Random();
+		int codeNo = random.nextInt(888888) + 111111;
+		
+		// 메일 제목, 내용, 보내는사람
+		String subject = "회원가입 인증 메일";
+		String text = "인증번호 " + codeNo + " 를 입력해주세요";
+		String from = "dyoung312269@gmail.com";
+		
+		try {
+			// 메일 내용, 헬퍼, 내용기입 및 전송
+			MimeMessage mail = javaMailSender.createMimeMessage();
+			MimeMessageHelper mailHelper = new MimeMessageHelper(mail, "UTF-8");
+			
+			mailHelper.setFrom(from, "관리자");
+			mailHelper.setTo(userEmail);
+			mailHelper.setSubject(subject);
+			mailHelper.setText(text);
+			
+			javaMailSender.send(mail);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		data.put("code", codeNo);
+		return data;
 	}
 	
 	@GetMapping("findIdPage")
 	public String findIdPage() {
 		return "findIdPage";
 	}
-	
+
 	@GetMapping("findPwPage")
 	public String findPwPage() {
 		return "findPwPage";
 	}
-	
+
 	@GetMapping("loginPage")
 	public String loginPage(Model model) {
 		model.addAttribute("checkPath", 0);
 		return "loginPage";
 	}
-	
-	@GetMapping("registPage")
-	public String registPage() {
-		return "registPage";
-	}
-	
+
 	@GetMapping("myInfoPage")
 	public String myInfoPage(HttpServletRequest req, HttpSession session, UserVo vo) {
 		session = req.getSession(false);
@@ -64,37 +154,22 @@ public class UserController {
 		session.setAttribute("cnt", writeCnt);
 		return "myInfoPage";
 	}
-	
+
 	@GetMapping("myInfoEdit")
 	public String myInfoEdit() {
 		return "myInfoEdit";
 	}
-	
+
 	@GetMapping("deleteInfoPage")
 	public String deleteInfoPage() {
 		return "deleteInfoPage";
 	}
-	
+
 	@GetMapping("choiceSulPage")
 	public String choiceSulPage() {
 		return "choiceSulPage";
 	}
 
-	@PostMapping("/regist")
-	public String registAfter(UserVo vo,@RequestParam String userName, @RequestParam String userId, @RequestParam String userPw,
-			@RequestParam("rn1") String rnString1, @RequestParam("rn2") String rnString2, HttpServletRequest req) {
-		String rnString = rnString1 + rnString2;
-		long rnN = Long.parseLong(rnString);
-
-		vo.setUserName(userName);
-		vo.setUserId(userId);
-		vo.setUserPw(userPw);
-		vo.setRegistNumber(rnN);
-		service.insertUser(vo);
-
-		return "index";
-	}
-	
 	@ResponseBody
 	@PostMapping("/loginCheck")
 	public int loginCheck(UserVo vo, HttpServletRequest req, @RequestParam String reqId, @RequestParam String reqPw) {
@@ -106,8 +181,8 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public String loginAfter(HttpSession session, UserVo vo, @RequestParam String userId, @RequestParam String userPw
-			, HttpServletRequest req, @RequestParam int pathChoiceNum) {
+	public String loginAfter(HttpSession session, UserVo vo, @RequestParam String userId, @RequestParam String userPw,
+			HttpServletRequest req, @RequestParam int pathChoiceNum) {
 		vo = service.selectUserById(userId);
 		if (vo != null) {
 			System.out.println("아이디일치!!!!!!");
@@ -116,7 +191,7 @@ public class UserController {
 				session = req.getSession(false);
 				session.setAttribute("sessionVo", vo);
 				session.setAttribute("check", true);
-				
+
 				int writeCnt = sulMapper.selectByRegistNumber(vo.getRegistNumber());
 				session.setAttribute("cnt", writeCnt);
 			} else {
@@ -167,7 +242,7 @@ public class UserController {
 			return 1;
 		}
 	}
-	
+
 	@PostMapping("/userInfoEdit")
 	public String infoEdit(UserVo vo, HttpSession session, HttpServletRequest req, @RequestParam String userPw) {
 		session = req.getSession(false);
@@ -180,14 +255,14 @@ public class UserController {
 
 	@PostMapping("/findId")
 	public String findId(UserVo vo, @RequestParam String userName, @RequestParam("rn1") String rnString1,
-		@RequestParam("rn2") String rnString2, Model model) {
+			@RequestParam("rn2") String rnString2, Model model) {
 		vo = new UserVo();
 		String rnString = rnString1 + rnString2;
 		long rnN = Long.parseLong(rnString);
 
 		vo.setUserName(userName);
 		vo.setRegistNumber(rnN);
-		
+
 		String findID = service.findIdByNameRn(vo);
 		if (findID != null) {
 			System.out.println("해당정보로 나온 아이디있음");
@@ -204,8 +279,8 @@ public class UserController {
 	}
 
 	@PostMapping("/findPw")
-	public String findPw(UserVo vo, @RequestParam String userName, @RequestParam String userId, @RequestParam("rn1") String rnString1,
-		@RequestParam("rn2") String rnString2, Model model) {
+	public String findPw(UserVo vo, @RequestParam String userName, @RequestParam String userId,
+			@RequestParam("rn1") String rnString1, @RequestParam("rn2") String rnString2, Model model) {
 		vo = new UserVo();
 		String rnString = rnString1 + rnString2;
 		long rnN = Long.parseLong(rnString);
@@ -213,7 +288,7 @@ public class UserController {
 		vo.setUserId(userId);
 		vo.setUserName(userName);
 		vo.setRegistNumber(rnN);
-		
+
 		String findPW = service.findPwByNameRn(vo);
 		if (findPW != null) {
 			System.out.println("해당정보로 나온 비밀번호있음");
@@ -230,14 +305,6 @@ public class UserController {
 			return "findFailPw";
 		}
 	}
-	
-	@ResponseBody
-	@PostMapping("/idCheck")
-	public int idCheck(HttpServletRequest req) {
-		String id = req.getParameter("sdy");
-		int countDupId = userMapper.findSameId(id).size();
-		return countDupId;
-	}
 
 	@ResponseBody
 	@PostMapping("/rnCheck")
@@ -246,7 +313,7 @@ public class UserController {
 		int countDupRn = userMapper.findSameRn(rn).size();
 		return countDupRn;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/sojuFood")
 	public List<String> sojuFood(HttpServletRequest req, @RequestParam String sibal) {

@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>한잔해</title>
+<title>회원가입</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -25,6 +25,7 @@
 				<!-- onsubmit return + 함수() = 클릭시 함수호출 -->
 				<form method="post" action="regist" name="registHard"
 					onsubmit="return formCheck(this)" accept-charset="UTF-8">
+
 					<div class="fields">
 						<div class="field half">
 							<label for="ID">아이디</label> <input type="text" id="inputUserId"
@@ -33,39 +34,41 @@
 						</div>
 						<div class="field half">
 							<label>ID중복체크</label>
-							<button type="button" class="primary" id="IdDupCheck">체크</button>
+							<button type="button" class="primary" id="IdDupCheckBtn">체크</button>
 						</div>
-						<!-- 중복체크여부확인 -->
-						<input type="hidden" id="DupCheck" name="DupCheck" value="UnCheck" />
+						<!-- 아이디중복체크여부확인 -->
+						<input type="hidden" id="IdDupCheck" name="IdDupCheck"
+							value="UnCheck" />
 					</div>
 					<div class="myFields" id="IdDupWarning">
 						<div class="myField">
 							<label class="myLabel" for="IdLabelWarning">IDIDIDIDID</label>
 						</div>
 					</div>
-					<div class="fields">
-						<div class="field">
-							<label for="irum">이름</label> <input type="text" id="userName"
-								maxlength="10" name="userName" placeholder="이름 입력"
-								required="required">
-						</div>
-					</div>
 
 					<div class="fields">
 						<div class="field half">
 							<label for="PW">비밀번호</label> <input type="password"
-								name="registPW" id="registPW" maxlength="15"
+								name="registPW" id="registPW" maxlength="30"
 								placeholder="비밀번호 입력" onchange="checkPw()" required="required">
 						</div>
 						<div class="field half">
 							<label for="PW">비밀번호확인</label> <input type="password"
-								name="userPw" id="checkPW" placeholder="비밀번호 재입력" maxlength="15"
+								name="userPw" id="checkPW" placeholder="비밀번호 재입력" maxlength="30"
 								onchange="checkPw()" required="required">
 						</div>
 					</div>
 					<div class="myFields" id="PwDupWarning">
 						<div class="myField">
 							<label class="myLabel" for="PwLabelWarning">PWPWPWPWPW</label>
+						</div>
+					</div>
+
+					<div class="fields">
+						<div class="field">
+							<label for="irum">이름</label> <input type="text" id="userName"
+								maxlength="30" name="userName" placeholder="이름 입력"
+								required="required">
 						</div>
 					</div>
 
@@ -86,13 +89,76 @@
 							<label class="myLabel" for="RnLabelWarning">RNRNRNRN</label>
 						</div>
 					</div>
+
+					<div class="fields">
+						<div class="field half">
+							<label for="Nickname">닉네임</label> <input type="text"
+								id="inputUserNick" name="userNick" required="required"
+								placeholder="닉네임 입력" maxlength="30" value="">
+						</div>
+						<div class="field half">
+							<label>닉네임중복체크</label>
+							<button type="button" class="primary" id="NickDupCheckBtn">체크</button>
+						</div>
+						<!-- 닉네임중복체크여부확인 -->
+						<input type="hidden" id="NickDupCheck" name="NickDupCheck"
+							value="UnCheck" />
+					</div>
+					<div class="myFields" id="NickDupWarning">
+						<div class="myField">
+							<label class="myLabel" for="NickLabelWarning">NICKNICK</label>
+						</div>
+					</div>
+
+					<div class="fields">
+						<div class="field half">
+							<label for="Email">이메일</label> <input type="text"
+								id="inputUserEmail" name="userEmail" required="required"
+								placeholder="이메일 입력" maxlength="100" value="">
+						</div>
+						<div class="field half">
+							<label>이메일중복체크</label>
+							<button type="button" class="primary" id="EmailCheckBtn">체크</button>
+						</div>
+						<!-- 이메일중복체크여부확인 -->
+						<input type="hidden" id="EmailDupCheck" name="EmailDupCheck"
+							value="UnCheck" />
+					</div>
+					<div class="myFields" id="EmailDupWarning">
+						<div class="myField">
+							<label class="myLabel" for="EmailLabelWarning">이메일이메일</label>
+						</div>
+					</div>
+
+					<div class="fields">
+						<div class="field half">
+							<label for="codeNo">인증번호</label> <input type="text"
+								id="inputCode" maxlength="15" name="inputCode"
+								placeholder="인증번호입력" required="required">
+						</div>
+						<div class="field half">
+							<label>인증번호</label>
+							<button type="button" class="primary" id="sendEmailCode">발급</button>
+						</div>
+						<!-- 이메일로 전송된 값 히든으로 저장 -->
+						<input type="hidden" name="correctCode" value="${data.code}">
+					</div>
+					<div class="myFields" id="CodeDupWarning">
+						<div class="myField">
+							<label class="myLabel" for="CodeLabelWarning">codecode</label>
+						</div>
+					</div>
+
 					<div class="btnFields">
 						<div class="field half">
 							<input id="registBtnWidth" type="submit" value="회원가입"
 								class="primary" name="sentBtn" />
 							<button id="reInputBtn" type="button" onclick="reInput();">ID재입력</button>
+							<button id="NickReInputBtn" type="button"
+								onclick="nickReInput();">닉네임재입력</button>
 						</div>
 					</div>
+
 				</form>
 			</div>
 		</header>

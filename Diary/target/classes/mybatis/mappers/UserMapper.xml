@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.mybatis.mappers.UserMapper">
+
+	<!-- 회원가입 -->
+	<insert id="insertUser">
+		insert into users_tb (userId, userPw, userNickname, userName,
+		userRegNo, userEmail)
+		values (#{userId}, #{userPw}, #{userNickname},
+		#{userName},
+		#{userRegNo}, #{userEmail})
+		<selectKey keyProperty="userNo" order="AFTER"
+			resultType="long">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<!-- 아이디 중복 -->
+	<select id="dupId" resultType="int">
+		select count(*) from users_tb
+		where userId = #{userId}
+	</select>
+
+	<!-- 닉 중복 -->
+	<select id="dupNick" resultType="int">
+		select count(*) from users_tb
+		where userNick = #{userNick}
+	</select>
+	
+	<!-- 이메일 중복 -->
+	<select id="dupEmail" resultType="int">
+		select count(*) from users_tb
+		where userEmail = #{userEmail}
+	</select>
+	
 	<select id="selectUserById" resultType="UserVo">
 		select * from users_tb
 		where userId=#{userId}
@@ -10,14 +42,6 @@
 		parameterType="UserVo">
 		select * from users_tb order by userId
 	</select>
-
-	<insert id="insertUser" parameterType="UserVo">
-		insert into users_tb(userName, registNumber, userId, userPw)
-		values(#{userName},#{registNumber},#{userId},#{userPw})
-		<selectKey keyProperty="userNo" order="AFTER" resultType="long">
-			select LAST_INSERT_ID()
-		</selectKey>
-	</insert>
 
 	<update id="updateUser" parameterType="UserVo">
 		update users_tb set
@@ -30,15 +54,5 @@
 		delete from users_tb where
 		userId = #{userId}
 	</delete>
-	
-	<select id="findIdByNameRn" resultType="String">
-		select userId from users_tb
-		where userName=#{userName} and registNumber = #{registNumber}
-	</select>
-	
-	<select id="findPwByNameRn" resultType="String">
-		select userPw from users_tb
-		where userName=#{userName} and registNumber = #{registNumber} and userId=#{userId}
-	</select>
-	
+
 </mapper>
