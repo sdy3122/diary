@@ -1,4 +1,4 @@
-package kr.co.vo;
+package kr.co.domain;
 
 import lombok.Data;
 

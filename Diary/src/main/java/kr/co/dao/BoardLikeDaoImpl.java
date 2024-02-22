@@ -3,7 +3,7 @@ package kr.co.dao;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import kr.co.vo.BoardLikeVo;
+import kr.co.domain.BoardLikeVo;
 
 @Repository
 public class BoardLikeDaoImpl implements BoardLikeDao{

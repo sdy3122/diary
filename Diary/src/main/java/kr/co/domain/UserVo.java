@@ -1,4 +1,4 @@
-package kr.co.vo;
+package kr.co.domain;
 
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +14,7 @@ public class UserVo {
 	private String userName; // 이름
 	private int userRegNo; // 주민번호
 	private String userEmail; // 이메일
+	private String userStatus; // 유저상태
 	@DateTimeFormat(pattern = "yyyy-mm-dd")
 	private Date userRegDate; // 가입날짜
 	@DateTimeFormat(pattern = "yyyy-mm-dd")

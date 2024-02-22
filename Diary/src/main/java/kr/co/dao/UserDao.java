@@ -1,6 +1,7 @@
 package kr.co.dao;
 
-import kr.co.vo.UserVo;
+import kr.co.domain.LoginDto;
+import kr.co.domain.UserVo;
 
 public interface UserDao {
 
@@ -15,4 +16,7 @@ public interface UserDao {
 
 	// 이메일 중복
 	public int dupEmail(String userEmail);
+	
+	// 로그인
+	public UserVo selectByIdAndPw(LoginDto loginDto);
 }

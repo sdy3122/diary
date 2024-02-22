@@ -1,6 +1,7 @@
 package kr.co.service;
 
-import kr.co.vo.UserVo;
+import kr.co.domain.LoginDto;
+import kr.co.domain.UserVo;
 
 public interface UserService {
 	// 회원가입
@@ -14,4 +15,7 @@ public interface UserService {
 
 	// 이메일 중복
 	public boolean dupEmail(String userEmail);
+	
+	// 로그인
+	public UserVo login(LoginDto loginDto);
 }

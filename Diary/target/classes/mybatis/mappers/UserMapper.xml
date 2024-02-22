@@ -5,10 +5,9 @@
 	<!-- 회원가입 -->
 	<insert id="insertUser">
 		insert into users_tb (userId, userPw, userNickname, userName,
-		userRegNo, userEmail)
+		userRegNo, userEmail, userStatus)
 		values (#{userId}, #{userPw}, #{userNickname},
-		#{userName},
-		#{userRegNo}, #{userEmail})
+		#{userName}, #{userRegNo}, #{userEmail}, 'active')
 		<selectKey keyProperty="userNo" order="AFTER"
 			resultType="long">
 			select LAST_INSERT_ID()
@@ -33,9 +32,10 @@
 		where userEmail = #{userEmail}
 	</select>
 	
-	<select id="selectUserById" resultType="UserVo">
+	<!-- 로그인 -->
+	<select id="selectByIdAndPw" resultType="UserVo">
 		select * from users_tb
-		where userId=#{userId}
+		where userId = #{userId}
 	</select>
 
 	<select id="selectUserList" resultType="UserVo"

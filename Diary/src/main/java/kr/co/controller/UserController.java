@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.co.mappers.SulMapper;
 import kr.co.service.UserService;
-import kr.co.vo.UserVo;
+import kr.co.domain.LoginDto;
+import kr.co.domain.UserVo;
 
 @Controller
 public class UserController {
@@ -130,6 +131,37 @@ public class UserController {
 		return data;
 	}
 	
+	// 로그인 페이지
+	@GetMapping("loginPage")
+	public String loginPage(Model model) {
+		model.addAttribute("checkPath", 0);
+		return "user/loginPage";
+	}
+	
+	// 로그인 프로세스
+	@PostMapping("/login")
+	public HashMap<String, Object> loginProcess(HttpSession session, LoginDto loginDto, @RequestParam int pathChoiceNum) {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		UserVo sessionUser = userService.login(loginDto);
+		
+		if (sessionUser != null) {
+			String state = sessionUser.getUserStatus();
+			if (state.equals("Inactive")) {
+				data.put("result", "out");
+			} else if (!BCrypt.checkpw(loginDto.getUserPw(), sessionUser.getUserPw())) {
+				data.put("result", "fail");
+			} else {
+				data.put("result", "success");
+				session.setAttribute("sessionUser", sessionUser);
+			}
+		}
+		if (pathChoiceNum == 0) {
+			return "index";
+		} else {
+			return "redirect:boardPage";
+		}
+	}
+	
 	@GetMapping("findIdPage")
 	public String findIdPage() {
 		return "findIdPage";
@@ -138,12 +170,6 @@ public class UserController {
 	@GetMapping("findPwPage")
 	public String findPwPage() {
 		return "findPwPage";
-	}
-
-	@GetMapping("loginPage")
-	public String loginPage(Model model) {
-		model.addAttribute("checkPath", 0);
-		return "loginPage";
 	}
 
 	@GetMapping("myInfoPage")
@@ -168,45 +194,6 @@ public class UserController {
 	@GetMapping("choiceSulPage")
 	public String choiceSulPage() {
 		return "choiceSulPage";
-	}
-
-	@ResponseBody
-	@PostMapping("/loginCheck")
-	public int loginCheck(UserVo vo, HttpServletRequest req, @RequestParam String reqId, @RequestParam String reqPw) {
-		vo.setUserId(reqId);
-		vo.setUserPw(reqPw);
-		int passOrNo = userMapper.beforeLogin(vo).size();
-		System.out.println(passOrNo);
-		return passOrNo;
-	}
-
-	@PostMapping("/login")
-	public String loginAfter(HttpSession session, UserVo vo, @RequestParam String userId, @RequestParam String userPw,
-			HttpServletRequest req, @RequestParam int pathChoiceNum) {
-		vo = service.selectUserById(userId);
-		if (vo != null) {
-			System.out.println("아이디일치!!!!!!");
-			if (vo.getUserPw().equals(userPw)) {
-				System.out.println("로그인 성공!!!!!!!");
-				session = req.getSession(false);
-				session.setAttribute("sessionVo", vo);
-				session.setAttribute("check", true);
-
-				int writeCnt = sulMapper.selectByRegistNumber(vo.getRegistNumber());
-				session.setAttribute("cnt", writeCnt);
-			} else {
-				System.out.println("아이디 일치, 비밀번호 틀림 ㅅㄱ");
-				return "loginFail";
-			}
-		} else {
-			System.out.println("해당아이디없음 ㅅㄱ");
-			return "loginFail";
-		}
-		if (pathChoiceNum == 0) {
-			return "index";
-		} else {
-			return "redirect:boardPage";
-		}
 	}
 
 	@RequestMapping(value = "/logout")

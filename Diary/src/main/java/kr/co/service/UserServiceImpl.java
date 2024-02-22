@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.dao.UserDao;
-import kr.co.vo.UserVo;
+import kr.co.domain.LoginDto;
+import kr.co.domain.UserVo;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,6 +34,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean dupEmail(String userEmail) {
 		return dao.dupEmail(userEmail) > 3;
+	}
+	// 로그인
+	@Override
+	public UserVo login(LoginDto loginDto) {
+		return dao.selectByIdAndPw(loginDto);
 	}
 
 }

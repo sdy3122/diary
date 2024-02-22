@@ -1,6 +1,6 @@
 package kr.co.dao;
 
-import kr.co.vo.BoardLikeVo;
+import kr.co.domain.BoardLikeVo;
 
 public interface BoardLikeDao {
 	public void doLike(BoardLikeVo likeVo); // 좋아요

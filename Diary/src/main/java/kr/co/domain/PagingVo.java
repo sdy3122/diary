@@ -1,4 +1,4 @@
-package kr.co.vo;
+package kr.co.domain;
 
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;

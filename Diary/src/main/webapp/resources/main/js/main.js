@@ -273,12 +273,23 @@ function changePw() {
 }
 
 // 로그인 form확인
+
+// 로그인할 때 아이디 저장
+var userInputId = getCookie("userInputId");
+var setCookieYN = getCookie("setCookieYN");
+if (setCookieYN == 'Y') {
+	$("#saveIdBox").prop("checked", true);
+} else {
+	$("#saveIdBox").prop("checked", false);
+}
+$("#inputLoginId").val(userInputId);
+
 function loginAjax() {
 	let loginSuccessOrFail = true;
 	let userId = $('#inputLoginId').val();
 	let userPw = $('#inputLoginPw').val();
 	$.ajax({
-		url : "loginCheck",
+		url : "login",
 		type : "post",
 		async : false,
 		data : {

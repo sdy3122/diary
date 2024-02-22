@@ -3,9 +3,9 @@ package kr.co.mappers;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.co.vo.Criteria;
-import kr.co.vo.SulVo;
-import kr.co.vo.UserVo;
+import kr.co.domain.Criteria;
+import kr.co.domain.SulVo;
+import kr.co.domain.UserVo;
 
 public interface SulMapper {
 	ArrayList<SulVo> selectLikeBtnDesc();

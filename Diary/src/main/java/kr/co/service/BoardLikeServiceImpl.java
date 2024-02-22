@@ -2,7 +2,7 @@ package kr.co.service;
 
 import org.springframework.stereotype.Service;
 
-import kr.co.vo.BoardLikeVo;
+import kr.co.domain.BoardLikeVo;
 
 @Service
 public class BoardLikeServiceImpl implements BoardLikeService{

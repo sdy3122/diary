@@ -1,6 +1,6 @@
 package kr.co.service;
 
-import kr.co.vo.BoardLikeVo;
+import kr.co.domain.BoardLikeVo;
 
 public interface BoardLikeService {
 	public void doLike(BoardLikeVo likeVo);

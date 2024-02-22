@@ -70,6 +70,12 @@
 										required="required">
 								</div>
 							</div>
+							<div class="myFields" id="loginCheck">
+								<div class="myField">
+									<input type="checkbox" class="formInputCheck" id="saveIdBox"> ID저장
+									<input type="checkbox" class="formInputCheck" id="userCookie"> 자동로그인
+								</div>
+							</div>
 							<div class="myFields" id="loginInputDiv">
 								<div class="myField">
 									<label class="myLabel" for="loginInputLabel">loglogloglog</label>
